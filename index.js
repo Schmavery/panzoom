@@ -832,7 +832,7 @@ function createPanZoom(domElement, options) {
     });
   }
 
-  function smoothZoomAbs(clientX, clientY, toScaleValue) {
+  function smoothZoomAbs(clientX, clientY, toScaleValue, callback) {
     var fromValue = transform.scale;
     var from = { scale: fromValue };
     var to = { scale: toScaleValue };
@@ -843,7 +843,8 @@ function createPanZoom(domElement, options) {
     zoomToAnimation = animate(from, to, {
       step: function (v) {
         zoomAbs(clientX, clientY, v.scale);
-      }
+      },
+      done: () => callback && callback()
     });
   }
 
