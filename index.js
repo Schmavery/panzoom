@@ -273,14 +273,31 @@ function createPanZoom(domElement, options) {
     };
   }
 
-  function moveTo(x, y) {
-    transform.x = x;
-    transform.y = y;
+  function moveTo(x, y, smooth) {
 
-    keepTransformInsideBounds();
+    if (smooth) {
+      var from = { x: transform.x, y: transform.y };
+      var to = { x: x, y: y };
 
-    triggerEvent('pan');
-    makeDirty();
+      moveByAnimation = animate(from, to, {
+        step: function (v) {
+          moveTo(v.x, v.y);
+        },
+        done: () => {
+          keepTransformInsideBounds();
+
+          triggerEvent('pan');
+          makeDirty();
+        }
+      });
+    } else {
+      transform.x = x;
+      transform.y = y;
+      keepTransformInsideBounds();
+
+      triggerEvent('pan');
+      makeDirty();
+    }
   }
 
   function moveBy(dx, dy) {
